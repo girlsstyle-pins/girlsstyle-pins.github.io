@@ -84,8 +84,8 @@
 
   <section id="success" hidden>
     <h1>Pinterest is connected</h1>
-    <p>Copy this code and paste it into the “Connect Pinterest” step of Pin Planner. The code works for a few minutes only.</p>
-    <p class="hint" lang="pl">Skopiuj kod i wklej go w GitHub → Actions → „Połącz Pinterest”. Kod działa tylko kilka minut.</p>
+    <p>Copy this code and send it to your Pin Planner bot on Telegram. The code works for a few minutes only.</p>
+    <p class="hint" lang="pl">Skopiuj kod i wyślij go swojemu botowi na Telegramie. Kod działa tylko kilka minut.</p>
     <textarea id="code" class="code" rows="3" readonly aria-label="Authorization code"></textarea>
     <button id="copy" type="button">Copy code</button>
     <p id="status" class="status" role="status" aria-live="polite"></p>
@@ -116,7 +116,7 @@
       box.value = code;
       document.getElementById("copy").addEventListener("click", function () {
         var status = document.getElementById("status");
-        var done = function () { status.textContent = "Copied. Paste it into Pin Planner now."; };
+        var done = function () { status.textContent = "Copied. Send it to the bot on Telegram now."; };
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(code).then(done, function () {
             box.select();
