@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Connect Pinterest – Girl's Style Pin Planner</title>
+<style>
+  :root {
+    --paper: #F1F2F2;
+    --ink: #000000;
+    --steel: #5E636B;
+    --rule: #CDD0D4;
+    --denim: #34507C;
+    --on-ink: #FFFFFF;
+    --alert: #A1271B;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #000000;
+      --ink: #EDEEEF;
+      --steel: #A3A8AF;
+      --rule: #2E3135;
+      --denim: #8FA8D6;
+      --on-ink: #000000;
+      --alert: #F08A7E;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+  }
+  main { max-width: 36rem; margin: 0 auto; padding: 3rem 1rem; }
+  .tag {
+    display: inline-flex;
+    border: 2px solid var(--ink);
+    font-weight: 850;
+    font-size: 1rem;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin-bottom: 2rem;
+  }
+  .tag span { padding: 0.25em 0.4em 0.2em; }
+  .tag .dark { background: var(--ink); color: var(--on-ink); }
+  h1 { font-size: 1.6rem; line-height: 1.2; margin: 0 0 0.75rem; }
+  p { margin: 0 0 1rem; }
+  .hint { color: var(--steel); }
+  .code {
+    display: block;
+    width: 100%;
+    margin: 1.25rem 0 1rem;
+    padding: 1rem;
+    border: 2px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    font: 600 1.05rem/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    word-break: break-all;
+    resize: none;
+  }
+  button {
+    font: inherit;
+    font-weight: 700;
+    background: var(--ink);
+    color: var(--on-ink);
+    border: 2px solid var(--ink);
+    padding: 0.8rem 1.3rem;
+    cursor: pointer;
+  }
+  button:hover { background: var(--denim); border-color: var(--denim); }
+  button:focus-visible, .code:focus-visible { outline: 3px solid var(--denim); outline-offset: 3px; }
+  .status { min-height: 1.5em; margin-top: 0.75rem; color: var(--steel); }
+  .error h1 { color: var(--alert); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <div class="tag" aria-hidden="true"><span class="dark">GIRL'S</span><span>STYLE</span></div>
+
+  <section id="success" hidden>
+    <h1>Pinterest is connected</h1>
+    <p>Copy this code and send it to your Pin Planner bot on Telegram. The code works for a few minutes only.</p>
+    <p class="hint" lang="pl">Skopiuj kod i wyślij go swojemu botowi na Telegramie. Kod działa tylko kilka minut.</p>
+    <textarea id="code" class="code" rows="3" readonly aria-label="Authorization code"></textarea>
+    <button id="copy" type="button">Copy code</button>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+  </section>
+
+  <section id="error" class="error" hidden>
+    <h1>Pinterest did not connect</h1>
+    <p id="error-text">Pinterest returned an error.</p>
+    <p class="hint">Start the “Connect Pinterest” step again and choose “Give access” on the Pinterest screen.</p>
+    <p class="hint" lang="pl">Uruchom ponownie „Połącz Pinterest” i na ekranie Pinteresta kliknij „Give access”.</p>
+  </section>
+
+  <section id="empty" hidden>
+    <h1>No code on this page</h1>
+    <p>This page only shows a code right after you approve Pin Planner on Pinterest. Start the “Connect Pinterest” step to get one.</p>
+    <p class="hint" lang="pl">Ta strona pokazuje kod tylko zaraz po zatwierdzeniu dostępu na Pintereście.</p>
+  </section>
+</main>
+<script>
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var code = params.get("code");
+    var error = params.get("error");
+
+    if (code) {
+      document.getElementById("success").hidden = false;
+      var box = document.getElementById("code");
+      box.value = code;
+      document.getElementById("copy").addEventListener("click", function () {
+        var status = document.getElementById("status");
+        var done = function () { status.textContent = "Copied. Send it to the bot on Telegram now."; };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(code).then(done, function () {
+            box.select();
+            status.textContent = "Select the code above and copy it manually.";
+          });
+        } else {
+          box.select();
+          try { document.execCommand("copy"); done(); }
+          catch (e) { status.textContent = "Select the code above and copy it manually."; }
+        }
+      });
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, "", window.location.pathname);
+      }
+    } else if (error) {
+      document.getElementById("error").hidden = false;
+      var description = params.get("error_description");
+      document.getElementById("error-text").textContent =
+        "Pinterest returned: " + (description || error) + ".";
+    } else {
+      document.getElementById("empty").hidden = false;
+    }
+  })();
+</script>
+</body>
+</html>
